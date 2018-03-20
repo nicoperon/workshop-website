@@ -1,152 +1,212 @@
+;(function () {
+	
+	'use strict';
 
-$(document).ready(function(){
-	"use strict";
+	var mobileMenuOutsideClick = function() {
 
-	var window_width 	 = $(window).width(),
-	window_height 		 = window.innerHeight,
-	header_height 		 = $(".default-header").height(),
-	header_height_static = $(".site-header.static").outerHeight(),
-	fitscreen 			 = window_height - header_height;
+		$(document).click(function (e) {
+	    var container = $("#fh5co-offcanvas, .js-fh5co-nav-toggle");
+	    if (!container.is(e.target) && container.has(e.target).length === 0) {
 
+	    	if ( $('body').hasClass('offcanvas') ) {
 
-	$(".fullscreen").css("height", window_height)
-	$(".fitscreen").css("height", fitscreen);
+    			$('body').removeClass('offcanvas');
+    			$('.js-fh5co-nav-toggle').removeClass('active');
+				
+	    	}
+	    
+	    	
+	    }
+		});
 
-     
-     // -------   Active Mobile Menu-----//
-
-    $(".menu-bar").on('click', function(e){
-        e.preventDefault();
-        $("nav").toggleClass('hide');
-        $("span", this).toggleClass("lnr-menu lnr-cross");
-        $(".main-menu").addClass('mobile-menu');
-    });
-     
-    $('select').niceSelect();
+	};
 
 
-    $('.active-feature-carousel').owlCarousel({
-        center: true,
-        items:1,
-        loop:true
-    })
-    $('.next-trigger').click(function() {
-        $(".active-feature-carousel").trigger('next.owl.carousel');
-    })
-        // Go to the previous item
-    $('.prev-trigger').click(function() {
-        $(".active-feature-carousel").trigger('prev.owl.carousel');
-    });
+	var offcanvasMenu = function() {
+
+		$('#page').prepend('<div id="fh5co-offcanvas" />');
+		$('#page').prepend('<a href="#" class="js-fh5co-nav-toggle fh5co-nav-toggle fh5co-nav-white"><i></i></a>');
+		var clone1 = $('.menu-1 > ul').clone();
+		$('#fh5co-offcanvas').append(clone1);
+		var clone2 = $('.menu-2 > ul').clone();
+		$('#fh5co-offcanvas').append(clone2);
+
+		$('#fh5co-offcanvas .has-dropdown').addClass('offcanvas-has-dropdown');
+		$('#fh5co-offcanvas')
+			.find('li')
+			.removeClass('has-dropdown');
+
+		// Hover dropdown menu on mobile
+		$('.offcanvas-has-dropdown').mouseenter(function(){
+			var $this = $(this);
+
+			$this
+				.addClass('active')
+				.find('ul')
+				.slideDown(500, 'easeOutExpo');				
+		}).mouseleave(function(){
+
+			var $this = $(this);
+			$this
+				.removeClass('active')
+				.find('ul')
+				.slideUp(500, 'easeOutExpo');				
+		});
 
 
+		$(window).resize(function(){
 
-    $('.active-service-carousel').owlCarousel({
-        items:2,
-        loop:true,
-        margin: 30,
-        dots: true,
-        responsive:{
-            0:{
-                items:1,
-            },
-            600:{
-                items:1,
-            },
-            1000:{
-                items:2,
-            }
-        }
-    });
+			if ( $('body').hasClass('offcanvas') ) {
 
-    $('.next-trigger').click(function() {
-        $(".active-service-carousel").trigger('next.owl.carousel');
-    })
-        // Go to the previous item
-    $('.prev-trigger').click(function() {
-        $(".active-service-carousel").trigger('prev.owl.carousel');
-    });
+    			$('body').removeClass('offcanvas');
+    			$('.js-fh5co-nav-toggle').removeClass('active');
+				
+	    	}
+		});
+	};
 
 
+	var burgerMenu = function() {
+
+		$('body').on('click', '.js-fh5co-nav-toggle', function(event){
+			var $this = $(this);
 
 
-    $('.play-btn').magnificPopup({
-        type: 'iframe',
-        mainClass: 'mfp-fade',
-        removalDelay: 160,
-        preloader: false,
-        fixedContentPos: false
-    });
-    $(document).ready(function() {
-        $('#mc_embed_signup').find('form').ajaxChimp();
-    });      
-    // -------   Mail Send ajax
+			if ( $('body').hasClass('overflow offcanvas') ) {
+				$('body').removeClass('overflow offcanvas');
+			} else {
+				$('body').addClass('overflow offcanvas');
+			}
+			$this.toggleClass('active');
+			event.preventDefault();
 
-     $(document).ready(function() {
-        var form = $('#myForm'); // contact form
-        var submit = $('.submit-btn'); // submit button
-        var alert = $('.alert-msg'); // alert div for show alert message
-
-        // form submit event
-        form.on('submit', function(e) {
-            e.preventDefault(); // prevent default form submit
-
-            $.ajax({
-                url: 'mail.php', // form action url
-                type: 'POST', // form submit method get/post
-                dataType: 'html', // request type html/json/xml
-                data: form.serialize(), // serialize form data
-                beforeSend: function() {
-                    alert.fadeOut();
-                    submit.html('Sending....'); // change submit button text
-                },
-                success: function(data) {
-                    alert.html(data).fadeIn(); // fade in response data
-                    form.trigger('reset'); // reset form
-                    submit.attr("style", "display: none !important");; // reset submit button text
-                },
-                error: function(e) {
-                    console.log(e)
-                }
-            });
-        });
-    });
-
-
-     //  Start Google map 
-
-            // When the window has finished loading create our google map below
-            google.maps.event.addDomListener(window, 'load', init);
-        
-            function init() {
-                // Basic options for a simple Google Map
-                // For more options see: https://developers.google.com/maps/documentation/javascript/reference#MapOptions
-                var mapOptions = {
-                    // How zoomed in you want the map to start at (always required)
-                    zoom: 11,
-
-                    // The latitude and longitude to center the map (always required)
-                    center: new google.maps.LatLng(40.6700, -73.9400), // New York
-
-                    // How you would like to style the map. 
-                    // This is where you would paste any style found on Snazzy Maps.
-                    styles: [{"featureType":"water","elementType":"geometry","stylers":[{"color":"#e9e9e9"},{"lightness":17}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"color":"#f5f5f5"},{"lightness":20}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#ffffff"},{"lightness":17}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#ffffff"},{"lightness":29},{"weight":0.2}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#ffffff"},{"lightness":18}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#ffffff"},{"lightness":16}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"#f5f5f5"},{"lightness":21}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#dedede"},{"lightness":21}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"on"},{"color":"#ffffff"},{"lightness":16}]},{"elementType":"labels.text.fill","stylers":[{"saturation":36},{"color":"#333333"},{"lightness":40}]},{"elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"geometry","stylers":[{"color":"#f2f2f2"},{"lightness":19}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#fefefe"},{"lightness":20}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"color":"#fefefe"},{"lightness":17},{"weight":1.2}]}]
-                };
-
-                // Get the HTML DOM element that will contain your map 
-                // We are using a div with id="map" seen below in the <body>
-                var mapElement = document.getElementById('map');
-
-                // Create the Google Map using our element and options defined above
-                var map = new google.maps.Map(mapElement, mapOptions);
-
-                // Let's also add a marker while we're at it
-                var marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(40.6700, -73.9400),
-                    map: map,
-                    title: 'Snazzy!'
-                });
-            }
+		});
+	};
 
 
 
- });
+	var contentWayPoint = function() {
+		var i = 0;
+		$('.animate-box').waypoint( function( direction ) {
+
+			if( direction === 'down' && !$(this.element).hasClass('animated-fast') ) {
+				
+				i++;
+
+				$(this.element).addClass('item-animate');
+				setTimeout(function(){
+
+					$('body .animate-box.item-animate').each(function(k){
+						var el = $(this);
+						setTimeout( function () {
+							var effect = el.data('animate-effect');
+							if ( effect === 'fadeIn') {
+								el.addClass('fadeIn animated-fast');
+							} else if ( effect === 'fadeInLeft') {
+								el.addClass('fadeInLeft animated-fast');
+							} else if ( effect === 'fadeInRight') {
+								el.addClass('fadeInRight animated-fast');
+							} else {
+								el.addClass('fadeInUp animated-fast');
+							}
+
+							el.removeClass('item-animate');
+						},  k * 200, 'easeInOutExpo' );
+					});
+					
+				}, 100);
+				
+			}
+
+		} , { offset: '85%' } );
+	};
+
+
+	var dropdown = function() {
+
+		$('.has-dropdown').mouseenter(function(){
+
+			var $this = $(this);
+			$this
+				.find('.dropdown')
+				.css('display', 'block')
+				.addClass('animated-fast fadeInUpMenu');
+
+		}).mouseleave(function(){
+			var $this = $(this);
+
+			$this
+				.find('.dropdown')
+				.css('display', 'none')
+				.removeClass('animated-fast fadeInUpMenu');
+		});
+
+	};
+
+
+	var goToTop = function() {
+
+		$('.js-gotop').on('click', function(event){
+			
+			event.preventDefault();
+
+			$('html, body').animate({
+				scrollTop: $('html').offset().top
+			}, 500, 'easeInOutExpo');
+			
+			return false;
+		});
+
+		$(window).scroll(function(){
+
+			var $win = $(window);
+			if ($win.scrollTop() > 200) {
+				$('.js-top').addClass('active');
+			} else {
+				$('.js-top').removeClass('active');
+			}
+
+		});
+	
+	};
+
+
+	// Loading page
+	var loaderPage = function() {
+		$(".fh5co-loader").fadeOut("slow");
+	};
+
+	var counter = function() {
+		$('.js-counter').countTo({
+			 formatter: function (value, options) {
+	      return value.toFixed(options.decimals);
+	    },
+		});
+	};
+
+	var counterWayPoint = function() {
+		if ($('#fh5co-counter').length > 0 ) {
+			$('#fh5co-counter').waypoint( function( direction ) {
+										
+				if( direction === 'down' && !$(this.element).hasClass('animated') ) {
+					setTimeout( counter , 400);					
+					$(this.element).addClass('animated');
+				}
+			} , { offset: '90%' } );
+		}
+	};
+
+	
+	$(function(){
+		mobileMenuOutsideClick();
+		offcanvasMenu();
+		burgerMenu();
+		contentWayPoint();
+		dropdown();
+		goToTop();
+		loaderPage();
+		counterWayPoint();
+	});
+
+
+}());
